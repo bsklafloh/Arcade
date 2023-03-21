@@ -1,0 +1,29 @@
+		// Set variable to MRNLINK IDS
+		var Road = $feature.MRNLINKID
+		// Set variable to related table (notice FeatureSetByRelationshipName)
+		var Table = FeatureSetByRelationshipName($feature, "ADT_Data_Merge", ['Mean_ADT', 'Year'], false)
+		// filter through table, matching the table's STATIONID with road variable)
+		var AADT = OrderBy(Filter(Table, 'StationID = @Road'), 'Year')
+		// this was copied and pasted from AGO community post, I only changed certain variables
+		var chartValues = {}
+		var chartNames = []
+		for (var f in AADT) {
+		        chartValues[Text(f.Year,'0000')] = Text(f.Mean_ADT,'###,###')
+		        Push(chartNames, f.Year)
+		    }
+		return {
+		    type: 'media',
+		    title : 'AADT by Year',
+		    description : 'Annual average daily traffic by year for this road',
+		    attributes : chartValues,  // replace this dictionary with your own key-value pairs,
+		    mediaInfos: [{
+		        type : 'linechart', //linechart | barchart | piechart | columnchart
+		        //title : '',
+		        //caption : '',
+		        altText : 'line chart showing traffic counts by year', //altText will be read by screen readers
+		        value : {
+		          fields: chartNames,  // choose what attributes to use in the chart
+		          //normalizeField : '',  // the name of the attribute to normalize by or value 
+		        }	  
+		      }]
+		  }
